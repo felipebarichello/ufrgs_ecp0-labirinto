@@ -3,10 +3,8 @@
 #include <cmath>
 
 
-void Edubot::charge() {
-    	double distance;
-
-    	while ((distance = this->get_distance(Sonar::Front)) > this->min_distance) {
+void Edubot::safe_charge() {
+    	while (this->get_distance(Sonar::Front) > this->min_distance) {
         	this->safe_advance();
     	}
 }

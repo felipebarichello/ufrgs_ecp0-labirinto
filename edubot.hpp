@@ -35,8 +35,8 @@ class Edubot : public EdubotLib {
 		// Logo, como esta variável geralmente é um divisor, armazena-se seu inverso
 		float max_distance = 1.8f;
 		
-		// Avançar até encontrar uma parede
-		void charge();
+		// Avançar até encontrar uma parede (sem bater)
+		void safe_charge();
 
 		// Mover, sem bater na parede
 		void safe_advance();

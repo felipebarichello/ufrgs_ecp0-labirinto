@@ -26,9 +26,18 @@ int main() {
 		edubot.inverse_angular_velocity = INVERSE_ANGULAR_VELOCITY;
 		edubot.max_distance = MAX_DISTANCE;
 		edubot.min_distance = MIN_DISTANCE;
+
+		double distance;
+		
+		// Esperar até o valor do sonar frontal ser atualizado
+		// Enquanto o robô não enviar um sinal de atualização do sonar frontal, o valor é zero
+		do {
+			edubot.sleepMilliseconds(1);
+			distance = edubot.get_distance(Sonar::Front);
+		} while (distance == 0);
 		
 		while (edubot.isConnected()) {
-			edubot.charge();
+			edubot.safe_charge();
 			edubot.safe_rotate(90);
 		}
 	}
