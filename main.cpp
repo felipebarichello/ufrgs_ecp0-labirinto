@@ -3,12 +3,11 @@
 #include "edubot.hpp"
 #include "parameters.hpp"
 
-#include "edubot.cpp"
-
 #if (SIMULATION)
 #include "simulation.hpp"
-#include "simulation.cpp"
 #endif
+
+#include "includes.hpp"
 
 
 int main() {
