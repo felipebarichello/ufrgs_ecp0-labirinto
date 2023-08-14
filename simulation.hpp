@@ -11,7 +11,4 @@ class VirtualEdubot : public Edubot {
 		// quando move() é chamado muitas vezes. Logo, esta nova versão da função leva em conta
 		// um cooldown que impede chamadas consecutivas muito rápidas
 		bool move(double velocity) override;
-
-//		void charge();
-//		void safe_advance();
 };
