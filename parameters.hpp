@@ -1,5 +1,6 @@
 #pragma once
 
+
 // Verdadeiro indica que o simulador será utilizado. Falso significa que o Edubot real será utilizado
 #define SIMULATION 1
 
