@@ -19,69 +19,69 @@ int main() {
 	Edubot edubot = Edubot();
 	#endif
 
-	// Estabelecer conexão
+	// Estabelecer conexï¿½o
 	if (!edubot.connect()) {
 		std::cout << "Nao foi possivel conectar-se ao Edubot" << std::endl;
 	} else {
-		edubot.max_distance = MAX_DISTANCE;
-
-		double distance;
+		double delta_theta = -90. / ROTATION_STEPS;
+		double front_distance;
 		
-		// Esperar até o valor do sonar frontal ser atualizado
-		// Enquanto o robô não enviar um sinal de atualização do sonar frontal, o valor é zero
+		edubot.safe_distance = SAFE_DISTANCE;
+		edubot.rotation_duration = ROTATION_DURATION;
+
+		
+		// Esperar atï¿½ o valor do sonar frontal ser atualizado
+		// Enquanto o robï¿½ nï¿½o enviar um sinal de atualizaï¿½ï¿½o do sonar frontal, o valor ï¿½ zero
 		do {
 			edubot.sleepMilliseconds(1);
-			distance = edubot.get_distance(Sonar::Front);
-		} while (distance == 0);
+			front_distance = edubot.get_distance(Sonar::Front);
+		} while (front_distance == 0);
 
 		MazeSolver maze = MazeSolver();
 				
 		while (edubot.isConnected()) {
-			double front_distance = edubot.get_distance(Sonar::Front);
+			front_distance = edubot.get_distance(Sonar::Front);
 				
-			// Seguir a parede da esquerda (arbitrário; poderia ser direita) até não haver mais parede à esquerda
+			// Seguir a parede da esquerda (arbitrï¿½rio; poderia ser direita) atï¿½ nï¿½o haver mais parede ï¿½ esquerda
 			while (maze.should_follow()) {
-				// Virar à esquerda se houver caminho
-				if (edubot.get_distance(Sonar::Left) >= SIDE_TURN_DISTANCE) {
+				// Virar ï¿½ esquerda se houver caminho
+				if (edubot.get_distance(Sonar::Left) >= FAR_DISTANCE) {
 					// Ir virando devagarinho
-					for (char i = 0; i < 6; i++) {
-						edubot.safe_rotate(-15);
+					for (char i = 0; i < ROTATION_STEPS; i++) {
+						edubot.safe_rotate(delta_theta);
 						
-						while (edubot.get_distance(Sonar::Left) < SIDE_MANEUVER_DISTANCE) {
-							edubot.move(MANEUVER_SPEED);
+						while (edubot.get_distance(Sonar::Left) < WALL_DISTANCE) {
+							edubot.move(SLOW_SPEED);
 						}
 					}
 					
 					maze.rotated_left();
-					edubot.move(OVERSHOOT_SPEED);
-					edubot.sleepMilliseconds(FOLLOW_OVERSHOOT);
 					break;
 				}
 
-				if (front_distance > FRONT_STOP_DISTANCE) {
+				if (front_distance > WALL_DISTANCE) {
 			        	front_distance = edubot.safe_advance(MID_SPEED);
 				} else {
-			    		// Virar à direita se houver obstrução
+			    		// Virar ï¿½ direita se houver obstruï¿½ï¿½o
 			    		edubot.safe_rotate(90);
 			    		maze.rotated_right();
 			    		break;
 			    	}
 			}
 
-			// Se o MazeSolver disser que não é para seguir a parede
-			if (!maze.should_follow()) {
-				double front_distance = edubot.get_distance(Sonar::Front);
-				
-				// Seguir reto até encontrar um obstáculo
-			    	while (front_distance > FRONT_STOP_DISTANCE) {
-			        	front_distance = edubot.safe_advance(HIGH_SPEED);
-			    	}
-		
-				// Então, converter à direita (arbitrário; poderia ser esquerda)
-				// E avisar o MazeSolver que houve uma rotação à direita
-				edubot.safe_rotate(90);
-				maze.rotated_right();
-			}
+			// Quando o MazeSolver disser que nï¿½o ï¿½ para seguir a parede
+			
+			front_distance = edubot.get_distance(Sonar::Front);
+			
+			// Seguir reto atï¿½ encontrar um obstï¿½culo
+		    	while (front_distance > WALL_DISTANCE) {
+		        	front_distance = edubot.safe_advance(HIGH_SPEED);
+		    	}
+	
+			// Entï¿½o, converter ï¿½ direita (arbitrï¿½rio; poderia ser esquerda)
+			// E avisar o MazeSolver que houve uma rotaï¿½ï¿½o ï¿½ direita
+			edubot.safe_rotate(90);
+			maze.rotated_right();
 		}
 	}
 

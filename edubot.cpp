@@ -6,7 +6,7 @@
 double Edubot::safe_advance(double base_speed) {
 	double front_distance = this->get_distance(Sonar::Front);
 	
-	double safety_multiplier = front_distance / this->max_distance;
+	double safety_multiplier = front_distance / this->safe_distance;
 	safety_multiplier = fmax(fmin(safety_multiplier, 1), 0);
 	
 	double speed = base_speed * safety_multiplier;
@@ -18,7 +18,7 @@ double Edubot::safe_advance(double base_speed) {
 
 void Edubot::safe_rotate(double angle) {
     	this->rotate(angle);
-    	this->sleepMilliseconds(2000);
+    	this->sleepMilliseconds(this->rotation_duration);
 }
 
 double Edubot::get_distance(Sonar sonar) {

@@ -18,10 +18,11 @@ enum class Sonar {
 
 class Edubot : public EdubotLib {
 	public:
-		// O inverso da distância máxima que será considerada para 
-		// Operações de multiplicação são muito mais rápidas que divisões para o computador
-		// Logo, como esta variável geralmente é um divisor, armazena-se seu inverso
-		float max_distance = 1.8f;
+		// Uma distância segura a partir da qual é seguro andar em alta velocidade
+		double safe_distance = 1.8f;
+
+		// Tempo máximo que o robô leva para rotacionar
+		double rotation_duration = 2000;
 
 		// Mover, cuidando para não bater na parede
 		// Retorna a distância da frente
