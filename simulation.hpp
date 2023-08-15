@@ -10,5 +10,5 @@ class VirtualEdubot : public Edubot {
 		// Há um bug no simulador que permite que o robô adquira uma velocidade absurda
 		// quando move() é chamado muitas vezes. Logo, esta nova versão da função leva em conta
 		// um cooldown que impede chamadas consecutivas muito rápidas
-		bool move(double velocity) override;
+		bool move(double speed) override;
 };

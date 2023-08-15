@@ -3,25 +3,22 @@
 #include <cmath>
 
 
-void Edubot::safe_charge() {
-    	while (this->get_distance(Sonar::Front) > this->min_distance) {
-        	this->safe_advance();
-    	}
-}
-
-void Edubot::safe_advance() {
-	float safety_multiplier = this->get_distance(Sonar::Front) / this->max_distance;
+double Edubot::safe_advance(double base_speed) {
+	double front_distance = this->get_distance(Sonar::Front);
+	
+	double safety_multiplier = front_distance / this->max_distance;
 	safety_multiplier = fmax(fmin(safety_multiplier, 1), 0);
 	
-	float speed = this->max_speed * safety_multiplier;
+	double speed = base_speed * safety_multiplier;
 	
 	this->move(speed);
+
+	return front_distance;
 }
 
-void Edubot::safe_rotate(float angle) {
+void Edubot::safe_rotate(double angle) {
     	this->rotate(angle);
-    	this->sleepMilliseconds(angle * this->inverse_angular_velocity);
-    	this->stop();
+    	this->sleepMilliseconds(2000);
 }
 
 double Edubot::get_distance(Sonar sonar) {
