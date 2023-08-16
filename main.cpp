@@ -19,7 +19,7 @@ int main() {
 	Edubot edubot = Edubot();
 	#endif
 
-	// Estabelecer conexï¿½o
+	// Estabelecer conexão
 	if (!edubot.connect()) {
 		std::cout << "Nao foi possivel conectar-se ao Edubot" << std::endl;
 	} else {
@@ -30,8 +30,8 @@ int main() {
 		edubot.rotation_duration = ROTATION_DURATION;
 
 		
-		// Esperar atï¿½ o valor do sonar frontal ser atualizado
-		// Enquanto o robï¿½ nï¿½o enviar um sinal de atualizaï¿½ï¿½o do sonar frontal, o valor ï¿½ zero
+		// Esperar até o valor do sonar frontal ser atualizado
+		// Enquanto o robô não enviar um sinal de atualização do sonar frontal, o valor é zero
 		do {
 			edubot.sleepMilliseconds(1);
 			front_distance = edubot.get_distance(Sonar::Front);
@@ -42,9 +42,9 @@ int main() {
 		while (edubot.isConnected()) {
 			front_distance = edubot.get_distance(Sonar::Front);
 				
-			// Seguir a parede da esquerda (arbitrï¿½rio; poderia ser direita) atï¿½ nï¿½o haver mais parede ï¿½ esquerda
+			// Seguir a parede da esquerda (arbitrário; poderia ser direita) até não haver mais parede à esquerda
 			while (maze.should_follow()) {
-				// Virar ï¿½ esquerda se houver caminho
+				// Virar à esquerda se houver caminho
 				if (edubot.get_distance(Sonar::Left) >= FAR_DISTANCE) {
 					// Ir virando devagarinho
 					for (char i = 0; i < ROTATION_STEPS; i++) {
@@ -62,14 +62,14 @@ int main() {
 				if (front_distance > WALL_DISTANCE) {
 			        	front_distance = edubot.safe_advance(MID_SPEED);
 				} else {
-			    		// Virar ï¿½ direita se houver obstruï¿½ï¿½o
+			    		// Virar à direita se houver obstrução
 			    		edubot.safe_rotate(90);
 			    		maze.rotated_right();
 			    		break;
 			    	}
 			}
 
-			// Quando o MazeSolver disser que nï¿½o ï¿½ para seguir a parede
+			// Quando o MazeSolver disser que não é para seguir a parede
 			
 			front_distance = edubot.get_distance(Sonar::Front);
 			
@@ -78,8 +78,8 @@ int main() {
 		        	front_distance = edubot.safe_advance(HIGH_SPEED);
 		    	}
 	
-			// Entï¿½o, converter ï¿½ direita (arbitrï¿½rio; poderia ser esquerda)
-			// E avisar o MazeSolver que houve uma rotaï¿½ï¿½o ï¿½ direita
+			// Então, converter à direita (arbitrário; poderia ser esquerda)
+			// E avisar o MazeSolver que houve uma rotação à direita
 			edubot.safe_rotate(90);
 			maze.rotated_right();
 		}
