@@ -4,20 +4,13 @@
 #include "parameters.hpp"
 #include "maze_solver.hpp"
 
-#if (SIMULATION)
-#include "simulation.hpp"
-#endif
-
 #include "includes.hpp"
 
 
+void snooze();
+
 int main() {
-	#if (SIMULATION)
-	VirtualEdubot edubot = VirtualEdubot();
-	edubot.move_wait = SIMULATION_MOVE_WAIT;
-	#else
 	Edubot edubot = Edubot();
-	#endif
 
 	// Estabelecer conexão
 	if (!edubot.connect()) {
@@ -33,12 +26,14 @@ int main() {
 		// Esperar até o valor do sonar frontal ser atualizado
 		// Enquanto o robô não enviar um sinal de atualização do sonar frontal, o valor é zero
 		do {
-			edubot.sleepMilliseconds(1);
+			snooze();
 			front_distance = edubot.get_distance(Sonar::Front);
 		} while (front_distance == 0);
 
 		MazeSolver maze = MazeSolver();
-				
+
+		// ATENÇÃO:
+		// Dentro de qualquer loop que repete por muito tempo, TODOS os seus caminhos devem "sleepar" a thread em algum momento
 		while (edubot.isConnected()) {
 			front_distance = edubot.get_distance(Sonar::Front);
 				
@@ -52,6 +47,7 @@ int main() {
 						
 						while (edubot.get_distance(Sonar::Left) < WALL_DISTANCE) {
 							edubot.move(SLOW_SPEED);
+							snooze();
 						}
 					}
 					
@@ -67,6 +63,8 @@ int main() {
 			    		maze.rotated_right();
 			    		break;
 			    	}
+
+			    	snooze();
 			}
 
 			// Quando o MazeSolver disser que não é para seguir a parede
@@ -76,14 +74,27 @@ int main() {
 			// Seguir reto atï¿½ encontrar um obstï¿½culo
 		    	while (front_distance > WALL_DISTANCE) {
 		        	front_distance = edubot.safe_advance(HIGH_SPEED);
+		        	snooze();
 		    	}
 	
 			// Então, converter à direita (arbitrário; poderia ser esquerda)
 			// E avisar o MazeSolver que houve uma rotação à direita
 			edubot.safe_rotate(90);
 			maze.rotated_right();
+
+			snooze();
 		}
 	}
 
 	return 0;
+}
+
+// Deixa a thread tirar uma soneca
+// Senão ela morre de exaustão
+void snooze() {
+	#ifdef _WIN32
+	    Sleep(1);
+	#else
+	    usleep(1000);
+	#endif
 }

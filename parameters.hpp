@@ -9,9 +9,6 @@
 
 
 #if (SIMULATION)
-	// Quando utilizando o simulador, tempo de sleep após mover, em milissegundos, para evitar bugs
-	#define SIMULATION_MOVE_WAIT 10
-
 	// Máxima velocidade considerada segura
 	#define HIGH_SPEED .5
 	

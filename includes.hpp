@@ -18,7 +18,3 @@
 
 #include "edubot.cpp"
 #include "maze_solver.cpp"
-
-#if (SIMULATION)
-#include "simulation.cpp"
-#endif
