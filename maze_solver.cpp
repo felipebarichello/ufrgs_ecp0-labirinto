@@ -1,12 +1,8 @@
 #include "maze_solver.hpp"
 
 
-void MazeSolver::rotated_left() {
-	this->rotations--;
-}
-
-void MazeSolver::rotated_right() {
-	this->rotations++;
+void MazeSolver::rotated(Side side) {
+	this->rotations += (signed char)side;
 }
 
 bool MazeSolver::should_follow() {

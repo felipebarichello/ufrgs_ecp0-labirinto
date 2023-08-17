@@ -1,8 +1,14 @@
 #pragma once
 
 
+#include "side.hpp"
+
 // Verdadeiro indica que o simulador será utilizado. Falso significa que o Edubot real será utilizado
 #define SIMULATION 1
+
+// Qual parede o robô vai seguir
+// -1 é esquerda, 1 é direita
+#define PREFERRED_SIDE -1
 
 // Quantas rotações o robô fará para seguir a parede
 #define ROTATION_STEPS 4
