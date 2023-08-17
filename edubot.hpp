@@ -25,14 +25,14 @@ class Edubot : public EdubotLib {
 		double rotation_duration = 2000;
 
 
+		// Retorna a distancia do sonar em metros
+		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
+		double get_distance(Sonar sonar);
+		
 		// Mover, cuidando para não bater na parede
 		// Retorna a distância da frente
 		double safe_advance(double base_speed);
 		
 		// Rotacionar, esperando o tempo necessário
 		void safe_rotate(double angle);
-		
-		// Retorna a distancia do sonar em metros
-		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
-		double get_distance(Sonar sonar);
 };

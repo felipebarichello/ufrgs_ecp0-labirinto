@@ -3,6 +3,10 @@
 #include <cmath>
 
 
+double Edubot::get_distance(Sonar sonar) {
+    	return getSonar((size_t)sonar);
+}
+
 double Edubot::safe_advance(double base_speed) {
 	double front_distance = this->get_distance(Sonar::Front);
 	
@@ -19,8 +23,4 @@ double Edubot::safe_advance(double base_speed) {
 void Edubot::safe_rotate(double angle) {
     	this->rotate(angle);
     	this->sleepMilliseconds(this->rotation_duration);
-}
-
-double Edubot::get_distance(Sonar sonar) {
-    	return getSonar((size_t)sonar);
 }
