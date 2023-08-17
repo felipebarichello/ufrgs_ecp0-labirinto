@@ -12,7 +12,7 @@ void snooze();
 int main() {
 	Edubot edubot = Edubot();
 
-	// Estabelecer conexï¿½o
+	// Estabelecer conexão
 	if (!edubot.connect()) {
 		std::cout << "Nao foi possivel conectar-se ao Edubot" << std::endl;
 	} else {
@@ -23,8 +23,8 @@ int main() {
 		edubot.rotation_duration = ROTATION_DURATION;
 
 		
-		// Esperar atï¿½ o valor do sonar frontal ser atualizado
-		// Enquanto o robï¿½ nï¿½o enviar um sinal de atualizaï¿½ï¿½o do sonar frontal, o valor ï¿½ zero
+		// Esperar até o valor do sonar frontal ser atualizado
+		// Enquanto o robô não enviar um sinal de atualização do sonar frontal, o valor é zero
 		do {
 			snooze();
 			front_distance = edubot.get_distance(Sonar::Front);
@@ -32,14 +32,14 @@ int main() {
 
 		MazeSolver maze = MazeSolver();
 
-		// ATENï¿½ï¿½O:
+		// ATENÇÃO:
 		// Dentro de qualquer loop que repete por muito tempo, TODOS os seus caminhos devem "sleepar" a thread em algum momento
 		while (edubot.isConnected()) {
 			front_distance = edubot.get_distance(Sonar::Front);
 				
-			// Seguir a parede da esquerda (arbitrï¿½rio; poderia ser direita) atï¿½ nï¿½o haver mais parede ï¿½ esquerda
+			// Seguir a parede da esquerda (arbitrário; poderia ser direita) até não haver mais parede à esquerda
 			while (maze.should_follow()) {
-				// Virar ï¿½ esquerda se houver caminho
+				// Virar à esquerda se houver caminho
 				if (edubot.get_distance(Sonar::Left) >= FAR_DISTANCE) {
 					// Ir virando devagarinho
 					for (char i = 0; i < ROTATION_STEPS - 1; i++) {
@@ -60,11 +60,11 @@ int main() {
 						}
 					}
 
-					// ï¿½ltima rotaï¿½ï¿½o
+					// Última rotação
 					edubot.safe_rotate(delta_theta);
 					maze.rotated_left();
 
-					// Seguir atï¿½ econtrar a parede novamente (apenas se o robï¿½ estiver seguindo uma parede)
+					// Seguir até econtrar a parede novamente (apenas se o robô estiver seguindo uma parede)
 					if (maze.should_follow()) {
 						double left_distance = edubot.get_distance(Sonar::Left);
 						
@@ -84,7 +84,7 @@ int main() {
 				if (front_distance > WALL_DISTANCE) {
 			        	front_distance = edubot.safe_advance(MID_SPEED);
 				} else {
-					// Virar ï¿½ direita se houver obstruï¿½ï¿½o
+					// Virar à direita se houver obstrução
 					edubot.safe_rotate(90);
 					maze.rotated_right();
 					snooze();
@@ -94,18 +94,18 @@ int main() {
 				snooze();
 			}
 
-			// Quando o MazeSolver disser que nï¿½o ï¿½ para seguir a parede
+			// Quando o MazeSolver disser que não é para seguir a parede
 			
 			front_distance = edubot.get_distance(Sonar::Front);
 			
-			// Seguir reto atï¿½ encontrar um obstï¿½culo
+			// Seguir reto até encontrar um obstáculo
 			while (front_distance > WALL_DISTANCE) {
 				front_distance = edubot.safe_advance(HIGH_SPEED);
 				snooze();
 			}
 	
-			// Entï¿½o, converter ï¿½ direita (arbitrï¿½rio; poderia ser esquerda)
-			// E avisar o MazeSolver que houve uma rotaï¿½ï¿½o ï¿½ direita
+			// Então, converter à direita (arbitrário; poderia ser esquerda)
+			// E avisar o MazeSolver que houve uma rotação à direita
 			edubot.safe_rotate(90);
 			maze.rotated_right();
 
@@ -117,7 +117,7 @@ int main() {
 }
 
 // Deixa a thread tirar uma soneca
-// Senï¿½o ela morre de exaustï¿½o
+// Senão ela morre de exaustão
 void snooze() {
 	#ifdef _WIN32
 	    Sleep(1);

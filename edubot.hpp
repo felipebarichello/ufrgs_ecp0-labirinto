@@ -1,5 +1,5 @@
 /*
- * Extensao da EdubotLib
+ * Extensão da EdubotLib
  * Macros para o Edubot
  */
 
@@ -18,21 +18,21 @@ enum class Sonar {
 
 class Edubot : public EdubotLib {
 	public:
-		// Uma distï¿½ncia segura a partir da qual ï¿½ seguro andar em alta velocidade
+		// Uma distância segura a partir da qual é seguro andar em alta velocidade
 		double safe_distance = 1.8f;
 
-		// Tempo mï¿½ximo que o robï¿½ leva para rotacionar
+		// Tempo máximo que o robô leva para rotacionar
 		double rotation_duration = 2000;
 
 
-		// Mover, cuidando para nï¿½o bater na parede
-		// Retorna a distï¿½ncia da frente
+		// Mover, cuidando para não bater na parede
+		// Retorna a distância da frente
 		double safe_advance(double base_speed);
 		
-		// Rotacionar, esperando o tempo necessï¿½rio
+		// Rotacionar, esperando o tempo necessário
 		void safe_rotate(double angle);
 		
 		// Retorna a distancia do sonar em metros
-		// Uma abstraï¿½ï¿½o em cima de getSonar() que recebe um enum ao inves de um size_t
+		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
 		double get_distance(Sonar sonar);
 };
