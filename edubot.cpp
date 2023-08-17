@@ -24,7 +24,3 @@ void Edubot::safe_rotate(double angle) {
 double Edubot::get_distance(Sonar sonar) {
     	return getSonar((size_t)sonar);
 }
-
-bool Edubot::move(double velocity) {
-	return this->EdubotLib::move(velocity);
-}

@@ -18,22 +18,21 @@ enum class Sonar {
 
 class Edubot : public EdubotLib {
 	public:
-		// Uma distância segura a partir da qual é seguro andar em alta velocidade
+		// Uma distï¿½ncia segura a partir da qual ï¿½ seguro andar em alta velocidade
 		double safe_distance = 1.8f;
 
-		// Tempo máximo que o robô leva para rotacionar
+		// Tempo mï¿½ximo que o robï¿½ leva para rotacionar
 		double rotation_duration = 2000;
 
-		// Mover, cuidando para não bater na parede
-		// Retorna a distância da frente
+
+		// Mover, cuidando para nï¿½o bater na parede
+		// Retorna a distï¿½ncia da frente
 		double safe_advance(double base_speed);
 		
-		// Rotacionar, esperando o tempo necessário
+		// Rotacionar, esperando o tempo necessï¿½rio
 		void safe_rotate(double angle);
 		
 		// Retorna a distancia do sonar em metros
-		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
+		// Uma abstraï¿½ï¿½o em cima de getSonar() que recebe um enum ao inves de um size_t
 		double get_distance(Sonar sonar);
-
-		virtual bool move(double velocity);
 };
