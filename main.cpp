@@ -42,18 +42,44 @@ int main() {
 				// Virar à esquerda se houver caminho
 				if (edubot.get_distance(Sonar::Left) >= FAR_DISTANCE) {
 					// Ir virando devagarinho
-					for (char i = 0; i < ROTATION_STEPS; i++) {
+					for (char i = 0; i < ROTATION_STEPS - 1; i++) {
 						edubot.safe_rotate(delta_theta);
+						edubot.move(SLOW_SPEED);
+						edubot.sleepMilliseconds(MIN_ROTSTEP_MOVE);
 						
-						while (edubot.get_distance(Sonar::Left) < WALL_DISTANCE) {
-							edubot.move(SLOW_SPEED);
+						while (true) {
+							bool is_too_close = edubot.get_distance(Sonar::Left) < ROTATION_RADIUS
+								|| edubot.get_distance(Sonar::MidLeft)          < ROTATION_RADIUS
+								|| edubot.get_distance(Sonar::FrontLeft)        < ROTATION_RADIUS;
+
+							if (!is_too_close) {
+								break;
+							}
+
 							snooze();
 						}
 					}
-					
+
+					// Última rotação
+					edubot.safe_rotate(delta_theta);
 					maze.rotated_left();
-					break;
+
+					// Seguir até econtrar a parede novamente (apenas se o robô estiver seguindo uma parede)
+					if (maze.should_follow()) {
+						double left_distance = edubot.get_distance(Sonar::Left);
+						
+						edubot.move(SLOW_SPEED);
+						
+						while (left_distance > FAR_DISTANCE) {
+							snooze();
+							left_distance = edubot.get_distance(Sonar::Left);
+						}
+					}
+					
+					continue;
 				}
+
+				front_distance = edubot.get_distance(Sonar::Front);
 
 				if (front_distance > WALL_DISTANCE) {
 			        	front_distance = edubot.safe_advance(MID_SPEED);
@@ -61,7 +87,8 @@ int main() {
 			    		// Virar à direita se houver obstrução
 			    		edubot.safe_rotate(90);
 			    		maze.rotated_right();
-			    		break;
+			    		snooze();
+			    		continue;
 			    	}
 
 			    	snooze();
@@ -71,7 +98,7 @@ int main() {
 			
 			front_distance = edubot.get_distance(Sonar::Front);
 			
-			// Seguir reto atï¿½ encontrar um obstï¿½culo
+			// Seguir reto até encontrar um obstáculo
 		    	while (front_distance > WALL_DISTANCE) {
 		        	front_distance = edubot.safe_advance(HIGH_SPEED);
 		        	snooze();

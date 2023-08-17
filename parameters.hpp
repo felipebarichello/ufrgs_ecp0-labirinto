@@ -5,7 +5,7 @@
 #define SIMULATION 1
 
 // Quantas rotações o robô fará para seguir a parede
-#define ROTATION_STEPS 6
+#define ROTATION_STEPS 4
 
 
 #if (SIMULATION)
@@ -16,7 +16,7 @@
 	#define MID_SPEED .4
 	
 	// Velocidade para manobrar
-	#define SLOW_SPEED .2
+	#define SLOW_SPEED .1
 	
 	// Distância que o robô tentará permanecer da parede
 	#define WALL_DISTANCE .12
@@ -32,6 +32,9 @@
 	
 	// Tipo WALL_DISTANCE, mas no momento da rotação
 	#define ROTATION_RADIUS .18
+
+	// Tempo mínimo que o robô vai andar após rotacionar para o lado da parede que está seguindo a cada passo
+	#define MIN_ROTSTEP_MOVE 500
 #else
 	// Máxima velocidade considerada segura
 	#define HIGH_SPEED .1
@@ -56,4 +59,7 @@
 	
 	// Tipo WALL_DISTANCE, mas no momento da rotação
 	#define ROTATION_RADIUS 18.0
+
+	// Tempo mínimo que o robô vai andar após rotacionar para o lado da parede que está seguindo a cada passo
+	#define MIN_ROTSTEP_MOVE 200
 #endif
