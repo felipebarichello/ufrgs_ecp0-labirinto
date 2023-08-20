@@ -31,11 +31,11 @@ double Edubot::get_distance(Sonar sonar) {
     	return getSonar((size_t)sonar);
 }
 
-double Edubot::get_angle() {
+Angle Edubot::get_angle() {
 	return -this->getTheta();
 }
 
-double Edubot::discrete_angle(unsigned int sections, double offset) {
+Angle Edubot::discrete_angle(unsigned int sections, Angle offset) {
 	return (this->get_angle() + offset) / sections * sections;
 }
 

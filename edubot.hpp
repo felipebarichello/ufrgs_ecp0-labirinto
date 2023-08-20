@@ -47,10 +47,10 @@ class Edubot : public EdubotLib {
 		// Retorna o ângulo que o robô forma 
 		// É o oposto de getTheta()
 		// Isso porque theta é positivo no sentido anti-horário, enquanto rotate() é positivo no horário
-		double get_angle();
+		Angle get_angle();
 
 		// Retorna o ângulo mais próximo a uma das `sections` seções, que começam a ser medidas na (rotação incial do robô) + `offset`
-		double discrete_angle(unsigned int sections, double offset);
+		Angle discrete_angle(unsigned int sections, Angle offset);
 		
 		// Mover, cuidando para não bater na parede
 		// Retorna a distância da frente
