@@ -5,7 +5,9 @@
 
 #pragma once
 
+#include <chrono>
 #include "side.hpp"
+#include "macros.hpp"
 
 
 enum class Sonar {
@@ -36,6 +38,8 @@ class Edubot : public EdubotLib {
 		double rotation_duration = 2000;
 
 
+		Edubot();
+
 		// Retorna a distancia do sonar em metros
 		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
 		double get_distance(Sonar sonar);
@@ -61,4 +65,17 @@ class Edubot : public EdubotLib {
 		// Move o robô lateralmente, com cuidado para não bater, até a distância lateral do obstáculo desejada
 		// Bloqueia o resto do programa até o fim do ajuste
 		void adjust_sideways(Side side, double min_distance, double max_distance);
+
+
+		#if (SIM_DRIFT != 0)
+			// Em que instante o robô simulado irá realizar um drift
+			std::chrono::time_point<std::chrono::high_resolution_clock> drift_instant;
+
+
+			// Reinicia o timer do drift
+			void reset_drift_cooldown();
+
+			// Override de EdubotLib::move()
+			bool move(double speed);
+		#endif
 };

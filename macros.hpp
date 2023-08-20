@@ -3,9 +3,18 @@
 #include "edubot.hpp"
 
 
+// Modificadores da simulação não devem ser aplicados no robô real
+#if (SIMULATION == 0)
+	#define SIM_DRIFT 0
+#endif
+
 // Compatilidade com parâmetros antigos
 #ifndef PREFERRED_SIDE
 	#define PREFERRED_SIDE -1
+#endif
+
+#ifndef SIM_DRIFT
+	#define SIM_DRIFT 0
 #endif
 
 // Lado dinâmico

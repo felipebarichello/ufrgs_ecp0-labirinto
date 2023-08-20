@@ -1,6 +1,8 @@
 #pragma once
 
+#include "edubot.hpp"
 #include <cmath>
+#include "macros.hpp"
 
 
 Angle::Angle(double value) {
@@ -17,6 +19,12 @@ Angle::Angle(double value) {
 
 Angle::operator double() const {
 	return this->value;
+}
+
+Edubot::Edubot() {
+	#if (SIM_DRIFT != 0)
+		this->reset_drift_cooldown();
+	#endif
 }
 
 double Edubot::get_distance(Sonar sonar) {
@@ -81,3 +89,25 @@ void Edubot::adjust_sideways(Side side, double min_distance, double max_distance
 		this->sleepMilliseconds(1);
 	}
 }
+
+#if (SIM_DRIFT != 0)
+	void Edubot::reset_drift_cooldown() {
+		auto now = std::chrono::high_resolution_clock::now();
+		constexpr auto drift_cooldown = std::chrono::milliseconds(SIM_DRIFT_COOLDOWN);
+		this->drift_instant = now + drift_cooldown;
+	}
+
+	bool Edubot::move(double speed) {
+		auto now = std::chrono::high_resolution_clock::now();
+		auto time_until_drift = std::chrono::duration_cast<std::chrono::milliseconds>(this->drift_instant - now);
+		constexpr auto zero_duration = std::chrono::milliseconds::zero();
+		
+		if (time_until_drift < zero_duration) {
+			this->rotate(SIM_DRIFT);
+			this->sleepMilliseconds(SIM_DRIFT_TIME);
+			reset_drift_cooldown();
+		}
+		
+		return this->EdubotLib::move(speed);
+	}
+#endif

@@ -3,13 +3,13 @@
 #include "edubot.hpp"
 #include "maze_solver.hpp"
 #include "side.hpp"
-#include "parameters.hpp"
 #include "macros.hpp"
 
 #include "includes.hpp"
 
 
 void snooze();
+
 
 int main() {
 	Edubot edubot = Edubot();
@@ -87,8 +87,6 @@ int main() {
 					// Virar ao lado contrário do preferido se houver obstrução
 					edubot.safe_rotate(o_angle(90.0));
 					maze.rotated((Side)OTHER_SIDE);
-					snooze();
-					continue;
 				}
 
 				snooze();
@@ -101,6 +99,11 @@ int main() {
 			// Seguir reto até encontrar um obstáculo
 			while (front_distance > WALL_DISTANCE) {
 				front_distance = edubot.safe_advance(HIGH_SPEED);
+
+				#if (!SIMULATION || SIM_DRIFT != 0)
+					//edubot.adjust_sideways((Side)PREFERRED_SIDE, MIN_WALL_DISTANCE, MAX_WALL_DISTANCE);
+				#endif
+				
 				snooze();
 			}
 	
@@ -115,6 +118,7 @@ int main() {
 
 	return 0;
 }
+
 
 // Deixa a thread tirar uma soneca
 // Senão ela morre de exaustão

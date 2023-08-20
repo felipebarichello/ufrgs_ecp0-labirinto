@@ -13,8 +13,5 @@
 
 #pragma once
 
-// Definição SIMULATION está aqui
-#include "parameters.hpp"
-
 #include "edubot.cpp"
 #include "maze_solver.cpp"
