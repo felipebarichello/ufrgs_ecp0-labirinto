@@ -29,11 +29,18 @@ struct Angle {
 
 	operator double() const;
 
+	bool operator==(Angle other);
+	bool operator!=(Angle other);
+	bool operator>(Angle other);
+	bool operator>=(Angle other);
+	bool operator<(Angle other);
+	bool operator<=(Angle other);
+
 	// Somar dois �ngulos
 	Angle operator+(Angle other);
 	
 	// Somar dois �ngulos e atribuir o resultado
-	void operator+=(Angle other);
+	Angle operator+=(Angle other);
 
 	// Retorna o �ngulo mais pr�ximo a uma das `sections` se��es
 	Angle discrete(unsigned int sections, Angle offset);

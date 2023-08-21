@@ -21,12 +21,36 @@ Angle::operator double() const {
 	return this->value;
 }
 
+bool Angle::operator==(Angle other) {
+	return this->value == other.value;
+}
+
+bool Angle::operator!=(Angle other) {
+	return this->value != other.value;
+}
+
+bool Angle::operator>(Angle other) {
+	return fabs(this->value) > fabs(other.value);
+}
+
+bool Angle::operator>=(Angle other) {
+	return *this > other || *this == other;
+}
+
+bool Angle::operator<(Angle other) {
+	return fabs(this->value) < fabs(other.value);
+}
+
+bool Angle::operator<=(Angle other) {
+	return *this < other || *this == other;
+}
+
 Angle Angle::operator+(Angle other) {
 	return Angle(this->value + other.value);
 }
 
-void Angle::operator+=(Angle other) {
-	*this = *this + other;
+Angle Angle::operator+=(Angle other) {
+	return *this = *this + other;
 }
 
 Angle Angle::discrete(unsigned int sections, Angle offset) {
