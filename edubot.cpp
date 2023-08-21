@@ -21,6 +21,33 @@ Angle::operator double() const {
 	return this->value;
 }
 
+Angle Angle::operator+(Angle other) {
+	return Angle(this->value + other.value);
+}
+
+void Angle::operator+=(Angle other) {
+	*this = *this + other;
+}
+
+Angle Angle::discrete(unsigned int sections, Angle offset) {
+	Angle offset_angle = (*this + offset).format_0to360();
+	double section_angle = 360.0 / sections;
+	unsigned int the_section_it_is_on = offset_angle / section_angle;
+	double offset_discrete_angle = the_section_it_is_on * section_angle;
+	return offset_discrete_angle - offset_angle;
+}
+
+double Angle::format_0to360() {
+	double value = this->value;
+	
+	if (value < 0) {
+		value = 360.0 + (double)value;
+	}
+
+	return value;
+}
+
+
 Edubot::Edubot() {
 	#if (SIM_DRIFT != 0)
 		this->reset_drift_cooldown();
@@ -33,10 +60,6 @@ double Edubot::get_distance(Sonar sonar) {
 
 Angle Edubot::get_angle() {
 	return -this->getTheta();
-}
-
-Angle Edubot::discrete_angle(unsigned int sections, Angle offset) {
-	return (this->get_angle() + offset) / sections * sections;
 }
 
 double Edubot::safe_advance(double base_speed) {
@@ -79,9 +102,9 @@ void Edubot::adjust_sideways(Side side, double min_distance, double max_distance
 		double side_distance = get_distance(side_sonar);
 
 		if (side_distance < min_distance) {
-			this->set_angle(this->discrete_angle(4, -45));
+			this->set_angle(this->get_angle().discrete(4, -45));
 		} else if (side_distance > max_distance) {
-			this->set_angle(this->discrete_angle(4, -45));
+			this->set_angle(this->get_angle().discrete(4, -45));
 		} else {
 			break;
 		}

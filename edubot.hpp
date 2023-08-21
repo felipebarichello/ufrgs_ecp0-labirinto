@@ -1,5 +1,5 @@
 /*
- * Extensão da EdubotLib
+ * Extensï¿½o da EdubotLib
  * Macros para o Edubot
  */
 
@@ -20,6 +20,7 @@ enum class Sonar {
     Right        = 6
 };
 
+// ï¿½ngulo no formato [-180, 180], em graus
 struct Angle {
 	double value;
 
@@ -27,48 +28,57 @@ struct Angle {
 	Angle(double value);
 
 	operator double() const;
+
+	// Somar dois ï¿½ngulos
+	Angle operator+(Angle other);
+	
+	// Somar dois ï¿½ngulos e atribuir o resultado
+	void operator+=(Angle other);
+
+	// Retorna o ï¿½ngulo mais prï¿½ximo a uma das `sections` seï¿½ï¿½es
+	Angle discrete(unsigned int sections, Angle offset);
+	
+	// Transformar em [0, 360]
+	double format_0to360();
 };
 
 class Edubot : public EdubotLib {
 	public:
-		// Uma distância segura a partir da qual é seguro andar em alta velocidade
+		// Uma distï¿½ncia segura a partir da qual ï¿½ seguro andar em alta velocidade
 		double safe_distance = 1.8f;
 
-		// Tempo máximo que o robô leva para rotacionar
+		// Tempo mï¿½ximo que o robï¿½ leva para rotacionar
 		double rotation_duration = 2000;
 
 
 		Edubot();
 
 		// Retorna a distancia do sonar em metros
-		// Uma abstração em cima de getSonar() que recebe um enum ao inves de um size_t
+		// Uma abstraï¿½ï¿½o em cima de getSonar() que recebe um enum ao inves de um size_t
 		double get_distance(Sonar sonar);
 
-		// Retorna o ângulo que o robô forma 
-		// É o oposto de getTheta()
-		// Isso porque theta é positivo no sentido anti-horário, enquanto rotate() é positivo no horário
+		// Retorna o ï¿½ngulo que o robï¿½ forma 
+		// ï¿½ o oposto de getTheta()
+		// Isso porque theta ï¿½ positivo no sentido anti-horï¿½rio, enquanto rotate() ï¿½ positivo no horï¿½rio
 		Angle get_angle();
-
-		// Retorna o ângulo mais próximo a uma das `sections` seções, que começam a ser medidas na (rotação incial do robô) + `offset`
-		Angle discrete_angle(unsigned int sections, Angle offset);
 		
-		// Mover, cuidando para não bater na parede
-		// Retorna a distância da frente
+		// Mover, cuidando para nï¿½o bater na parede
+		// Retorna a distï¿½ncia da frente
 		double safe_advance(double base_speed);
 		
-		// Rotacionar, esperando o tempo necessário
+		// Rotacionar, esperando o tempo necessï¿½rio
 		void safe_rotate(Angle angle);
 
-		// Rotacionar o robô até um ângulo relativo à posição inicial do robô
+		// Rotacionar o robï¿½ atï¿½ um ï¿½ngulo relativo ï¿½ posiï¿½ï¿½o inicial do robï¿½
 		void set_angle(Angle angle);
 
-		// Move o robô lateralmente, com cuidado para não bater, até a distância lateral do obstáculo desejada
-		// Bloqueia o resto do programa até o fim do ajuste
+		// Move o robï¿½ lateralmente, com cuidado para nï¿½o bater, atï¿½ a distï¿½ncia lateral do obstï¿½culo desejada
+		// Bloqueia o resto do programa atï¿½ o fim do ajuste
 		void adjust_sideways(Side side, double min_distance, double max_distance);
 
 
 		#if (SIM_DRIFT != 0)
-			// Em que instante o robô simulado irá realizar um drift
+			// Em que instante o robï¿½ simulado irï¿½ realizar um drift
 			std::chrono::time_point<std::chrono::high_resolution_clock> drift_instant;
 
 
