@@ -81,8 +81,8 @@ void Edubot::safe_rotate(Angle angle) {
 }
 
 void Edubot::set_angle(Angle angle) {
-	Angle dangle = (Angle)angle - (Angle)this->get_angle();
-	this->safe_rotate(dangle);
+	Angle delta_angle = (Angle)angle - (Angle)this->get_angle();
+	this->safe_rotate(delta_angle);
 }
 
 void Edubot::adjust_sideways(Side side, double min_distance, double max_distance) {
