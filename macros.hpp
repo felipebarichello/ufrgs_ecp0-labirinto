@@ -13,6 +13,14 @@
 	#define PREFERRED_SIDE -1
 #endif
 
+#ifndef MIN_WALL_DISTANCE
+	#define MIN_WALL_DISTANCE WALL_DISTANCE
+#endif
+
+#ifndef MAX_WALL_DISTANCE
+	#define MAX_WALL_DISTANCE WALL_DISTANCE
+#endif
+
 #ifndef SIM_DRIFT
 	#define SIM_DRIFT 0
 #endif

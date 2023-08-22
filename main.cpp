@@ -99,11 +99,6 @@ int main() {
 			// Seguir reto até encontrar um obstáculo
 			while (front_distance > WALL_DISTANCE) {
 				front_distance = edubot.safe_advance(HIGH_SPEED);
-
-				#if (!SIMULATION || SIM_DRIFT != 0)
-					//edubot.adjust_sideways((Side)PREFERRED_SIDE, MIN_WALL_DISTANCE, MAX_WALL_DISTANCE);
-				#endif
-				
 				snooze();
 			}
 	

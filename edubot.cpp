@@ -53,6 +53,18 @@ Angle Angle::operator+=(Angle other) {
 	return *this = *this + other;
 }
 
+Angle Angle::operator-(Angle other) {
+	return Angle(this->value - other.value);
+}
+
+Angle Angle::operator-=(Angle other) {
+	return *this = *this - other;
+}
+
+Angle Angle::operator-() {
+	return Angle(-this->value);
+}
+
 Angle Angle::discrete(unsigned int sections, Angle offset) {
 	Angle offset_angle = (*this + offset).format_0to360();
 	double section_angle = 360.0 / sections;
@@ -87,6 +99,12 @@ Angle Edubot::get_angle() {
 }
 
 double Edubot::safe_advance(double base_speed) {
+	#if (COUNTERDRIFT)
+		if (this->intended_theta - this->get_angle() > (Angle)ANGLE_LOW_TOLERANCE) {
+			this->center_self(CENTER_TOLERANCE, FAR_DISTANCE, FALLBACK_DISTANCE);
+		}
+	#endif
+	
 	double front_distance = this->get_distance(Sonar::Front);
 	
 	double safety_multiplier = front_distance / this->safe_distance;
@@ -100,8 +118,12 @@ double Edubot::safe_advance(double base_speed) {
 }
 
 void Edubot::safe_rotate(Angle angle) {
-    	this->rotate(angle);
-    	this->sleepMilliseconds(this->rotation_duration);
+	this->rotate(angle);
+	this->sleepMilliseconds(this->rotation_duration);
+    	
+    	#if (COUNTERDRIFT)
+    		this->intended_theta += angle;
+    	#endif
 }
 
 void Edubot::set_angle(Angle angle) {
@@ -109,33 +131,60 @@ void Edubot::set_angle(Angle angle) {
 	this->safe_rotate(delta_angle);
 }
 
-void Edubot::adjust_sideways(Side side, double min_distance, double max_distance) {
-	Sonar side_sonar;
-	
-	switch (side) {
-		case Side::Left:
-			side_sonar = Sonar::Left;
-			break;
-			
-		case Side::Right:
-			side_sonar = Sonar::Right;
-			break;
+#if (COUNTERDRIFT)
+	Angle Edubot::get_intended_theta() {
+		return this->intended_theta;
 	}
 
-	while (true) {
-		double side_distance = get_distance(side_sonar);
+	void Edubot::adjust_angle() {
+		Angle intended_theta = this->intended_theta;
+		this->set_angle(this->intended_theta);
+		this->intended_theta = intended_theta;
+	}
 
-		if (side_distance < min_distance) {
-			this->set_angle(this->get_angle().discrete(4, -45));
-		} else if (side_distance > max_distance) {
-			this->set_angle(this->get_angle().discrete(4, -45));
-		} else {
-			break;
+	void Edubot::adjust_angle_until(Angle tolerance) {
+		while (this->intended_theta - this->get_angle() > tolerance) {
+			this->adjust_angle();
+		}
+	}
+
+	void Edubot::center_self(double tolerance, double too_far, double fallback) {
+		this->adjust_angle_until(ANGLE_LOW_TOLERANCE);
+	
+		while (true) {
+			double left_distance  = get_distance(Sonar::Left);
+			double right_distance = get_distance(Sonar::Right);
+
+			if (left_distance  >= too_far) left_distance  = fallback;
+			if (right_distance >= too_far) right_distance = fallback;
+
+			double diff = right_distance - left_distance;
+
+			// Se estiver dentro da tolerância (no centro o suficiente), já está centralizado
+			if (diff <= tolerance) {
+				break;
+			}
+
+			Angle adjustment_turn = Angle(0);
+
+			// (diff > 0) -> (right_distance > left_distance) -> (robô muito para a esquerda) -> (deve rotacionar no sentido horário)
+			if (diff > 0) {
+				adjustment_turn = 90.0;
+			} else {
+				adjustment_turn = -90.0;
+			}
+
+			this->safe_rotate(adjustment_turn);
+			this->move(SLOW_SPEED);
+			this->sleepMilliseconds(ADJUSTMENT_TIME);
+			this->safe_rotate(-adjustment_turn);
+	
+			this->sleepMilliseconds(1);
 		}
 
-		this->sleepMilliseconds(1);
+		this->adjust_angle_until(ANGLE_HIGH_TOLERANCE);
 	}
-}
+#endif
 
 #if (SIM_DRIFT != 0)
 	void Edubot::reset_drift_cooldown() {

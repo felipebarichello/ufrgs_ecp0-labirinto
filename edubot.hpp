@@ -36,11 +36,11 @@ struct Angle {
 	bool operator<(Angle other);
 	bool operator<=(Angle other);
 
-	// Somar dois ï¿½ngulos
 	Angle operator+(Angle other);
-	
-	// Somar dois ï¿½ngulos e atribuir o resultado
 	Angle operator+=(Angle other);
+	Angle operator-(Angle other);
+	Angle operator-=(Angle other);
+	Angle operator-();
 
 	// Retorna o ï¿½ngulo mais prï¿½ximo a uma das `sections` seï¿½ï¿½es
 	Angle discrete(unsigned int sections, Angle offset);
@@ -79,20 +79,38 @@ class Edubot : public EdubotLib {
 		// Rotacionar o robï¿½ atï¿½ um ï¿½ngulo relativo ï¿½ posiï¿½ï¿½o inicial do robï¿½
 		void set_angle(Angle angle);
 
-		// Move o robï¿½ lateralmente, com cuidado para nï¿½o bater, atï¿½ a distï¿½ncia lateral do obstï¿½culo desejada
-		// Bloqueia o resto do programa atï¿½ o fim do ajuste
-		void adjust_sideways(Side side, double min_distance, double max_distance);
 
+	#if (COUNTERDRIFT)
+		public:
+			Angle get_intended_theta();
 
-		#if (SIM_DRIFT != 0)
-			// Em que instante o robï¿½ simulado irï¿½ realizar um drift
-			std::chrono::time_point<std::chrono::high_resolution_clock> drift_instant;
+			// Ajusta o ângulo uma vêz para intended_theta
+			void adjust_angle();
 
+			// Ajusta o ângulo para intended_theta até entrar na tolerância
+			void adjust_angle_until(Angle tolerance);
+		
+			// Move o robï¿½ lateralmente, a fim de colocï¿½-lo no meio da pista atï¿½ a distï¿½ncia lateral do obstï¿½culo desejada
+			// Bloqueia o resto do programa atï¿½ o fim do ajuste
+			void center_self(double tolerance, double too_far, double fallback);
 
+		private:
+			// "Teta esperado" proveniente das rotaï¿½ï¿½es solicitadas do programa
+			// O robï¿½ utilizarï¿½ este ï¿½ngulo para counterar o drift
+			Angle intended_theta = Angle(0);
+	#endif
+
+	#if (SIM_DRIFT != 0)
+		public:
 			// Reinicia o timer do drift
 			void reset_drift_cooldown();
 
 			// Override de EdubotLib::move()
 			bool move(double speed);
-		#endif
+			
+		private:
+			// Em que instante o robï¿½ simulado irï¿½ realizar um drift
+			std::chrono::time_point<std::chrono::high_resolution_clock> drift_instant;
+			
+	#endif
 };

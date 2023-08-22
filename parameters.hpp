@@ -1,10 +1,14 @@
 #pragma once
 
-
 #include "side.hpp"
+
 
 // `true` indica que o simulador será utilizado. `false` significa que o Edubot real será utilizado.
 #define SIMULATION true
+
+// A classe do robô terá um "teta esperado", que é o teta esperado devido às rotações solicitadas pelo programa.
+// O robô utilizará este ângulo para counterar o drift
+#define COUNTERDRIFT true
 
 // Qual parede o robô vai seguir
 // -1 é esquerda, 1 é direita
@@ -13,6 +17,12 @@
 // Quantas rotações o robô fará para seguir a parede
 #define ROTATION_STEPS 4
 
+// Quantos graus de imprecisão o ângulo do robô pode estar
+#define ANGLE_HIGH_TOLERANCE 6.0
+#define ANGLE_LOW_TOLERANCE  4.0
+
+#define ADJUSTMENT_TIME 800
+
 
 #if (SIMULATION)
 	// Força do drift simulado do simulador
@@ -20,7 +30,7 @@
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
 	//   -1 a -180: Força do drift para a esquerda
-	#define SIM_DRIFT 0
+	#define SIM_DRIFT -5
 
      // O quanto dura o drift do robô simulado, em milissegundos
 	#define SIM_DRIFT_TIME 1
@@ -47,7 +57,7 @@
 	// Distância a partir da qual o robô considera "seguro" andar em alta velocidade
 	#define SAFE_DISTANCE 1.0
 
-	// Distância considerada "longe" para decidir se não há parede
+	// Distância considerada "longe" para decidir se não há parede na direção
 	#define FAR_DISTANCE .3
 	
 	// Tempo máximo que o robô leva para rotacionar
@@ -58,6 +68,11 @@
 
 	// Tempo mínimo que o robô vai andar após rotacionar para o lado da parede que está seguindo a cada passo
 	#define MIN_ROTSTEP_MOVE 500
+
+	// Imprecisão de distância permitida do robô não estar no centro
+	#define CENTER_TOLERANCE .08
+
+	#define FALLBACK_DISTANCE .12
 #else
 	// Máxima velocidade considerada segura
 	#define HIGH_SPEED .1
@@ -89,4 +104,9 @@
 
 	// Tempo mínimo que o robô vai andar após rotacionar para o lado da parede que está seguindo a cada passo
 	#define MIN_ROTSTEP_MOVE 200
+
+	// Imprecisão de distância permitida do robô não estar no centro
+	#define CENTER_TOLERANCE 8.0
+
+	#define FALLBACK_DISTANCE 15.0
 #endif
