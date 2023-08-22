@@ -34,7 +34,7 @@ bool Angle::operator>(Angle other) {
 }
 
 bool Angle::operator>=(Angle other) {
-	return *this > other || *this == other;
+	return !(*this < other);
 }
 
 bool Angle::operator<(Angle other) {
@@ -42,7 +42,7 @@ bool Angle::operator<(Angle other) {
 }
 
 bool Angle::operator<=(Angle other) {
-	return *this < other || *this == other;
+	return !(*this > other);
 }
 
 Angle Angle::operator+(Angle other) {
