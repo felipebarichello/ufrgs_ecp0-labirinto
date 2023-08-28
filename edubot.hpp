@@ -94,23 +94,29 @@ class Edubot : public EdubotLib {
 			// Bloqueia o resto do programa at� o fim do ajuste
 			void center_self(double tolerance, double too_far, double fallback);
 
+			// Override de EdubotLib::move()
+			bool move(double speed);
+
 		private:
 			// "Teta esperado" proveniente das rota��es solicitadas do programa
 			// O rob� utilizar� este �ngulo para counterar o drift
 			Angle intended_theta = Angle(0);
 	#endif
 
+	#if (MOVE_COOLDOWN > 0)
+		private:
+			std::chrono::time_point<std::chrono::high_resolution_clock> move_available;
+
+			void reset_move_cooldown();
+	#endif
+
 	#if (SIM_DRIFT != 0)
 		public:
 			// Reinicia o timer do drift
 			void reset_drift_cooldown();
-
-			// Override de EdubotLib::move()
-			bool move(double speed);
 			
 		private:
 			// Em que instante o rob� simulado ir� realizar um drift
 			std::chrono::time_point<std::chrono::high_resolution_clock> drift_instant;
-			
 	#endif
 };

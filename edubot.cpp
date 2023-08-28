@@ -85,6 +85,10 @@ double Angle::format_0to360() {
 
 
 Edubot::Edubot() {
+	#if (MOVE_COOLDOWN > 0) 
+		this->reset_move_cooldown();
+	#endif
+	
 	#if (SIM_DRIFT != 0)
 		this->reset_drift_cooldown();
 	#endif
@@ -114,11 +118,14 @@ double Edubot::safe_advance(double base_speed) {
 	
 	this->move(speed);
 
+	std::cout << "To ouvindo" << std::endl;
+
 	return front_distance;
 }
 
 void Edubot::safe_rotate(Angle angle) {
-	this->rotate(angle);
+	this->rotate(angle * 0.7);
+	std::cout << "Entrei" << std::endl;
 	this->sleepMilliseconds(this->rotation_duration);
     	
     	#if (COUNTERDRIFT)
@@ -129,6 +136,34 @@ void Edubot::safe_rotate(Angle angle) {
 void Edubot::set_angle(Angle angle) {
 	Angle delta_angle = (Angle)angle - (Angle)this->get_angle();
 	this->safe_rotate(delta_angle);
+}
+
+bool Edubot::move(double speed) {
+	#if (SIM_DRIFT != 0)
+		auto now = std::chrono::high_resolution_clock::now();
+		auto time_until_drift = std::chrono::duration_cast<std::chrono::milliseconds>(this->drift_instant - now);
+		constexpr auto zero_duration = std::chrono::milliseconds::zero();
+		
+		if (time_until_drift < zero_duration) {
+			this->rotate(SIM_DRIFT);
+			this->sleepMilliseconds(SIM_DRIFT_TIME);
+			reset_drift_cooldown();
+		}
+	#endif
+
+	#if (MOVE_COOLDOWN > 0)
+		auto now = std::chrono::high_resolution_clock::now();
+		auto time_until_move = std::chrono::duration_cast<std::chrono::milliseconds>(this->move_available - now);
+		constexpr auto zero_duration = std::chrono::milliseconds::zero();
+		
+		if (time_until_move < zero_duration) {
+			reset_move_cooldown();
+		} else {
+			return false;
+		}
+	#endif
+		
+	return this->EdubotLib::move(speed);
 }
 
 #if (COUNTERDRIFT)
@@ -186,24 +221,18 @@ void Edubot::set_angle(Angle angle) {
 	}
 #endif
 
+#if (MOVE_COOLDOWN > 0)
+	void Edubot::reset_move_cooldown() {
+		auto now = std::chrono::high_resolution_clock::now();
+		constexpr auto cooldown = std::chrono::milliseconds(MOVE_COOLDOWN);
+		this->move_available = now + cooldown;
+	}
+#endif
+
 #if (SIM_DRIFT != 0)
 	void Edubot::reset_drift_cooldown() {
 		auto now = std::chrono::high_resolution_clock::now();
 		constexpr auto drift_cooldown = std::chrono::milliseconds(SIM_DRIFT_COOLDOWN);
 		this->drift_instant = now + drift_cooldown;
-	}
-
-	bool Edubot::move(double speed) {
-		auto now = std::chrono::high_resolution_clock::now();
-		auto time_until_drift = std::chrono::duration_cast<std::chrono::milliseconds>(this->drift_instant - now);
-		constexpr auto zero_duration = std::chrono::milliseconds::zero();
-		
-		if (time_until_drift < zero_duration) {
-			this->rotate(SIM_DRIFT);
-			this->sleepMilliseconds(SIM_DRIFT_TIME);
-			reset_drift_cooldown();
-		}
-		
-		return this->EdubotLib::move(speed);
 	}
 #endif

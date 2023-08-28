@@ -91,7 +91,9 @@ int main() {
 
 				snooze();
 			}
+			
 
+		std::cout << "socorro" << std::endl;
 			// Quando o MazeSolver disser que não é para seguir a parede
 			
 			front_distance = edubot.get_distance(Sonar::Front);
@@ -99,12 +101,15 @@ int main() {
 			// Seguir reto até encontrar um obstáculo
 			while (front_distance > WALL_DISTANCE) {
 				front_distance = edubot.safe_advance(HIGH_SPEED);
+				std::cout << "Dist front: " << front_distance << std::endl;
 				snooze();
 			}
 	
 			// Então, converter ao lado contrário do preferido (arbitrário; poderia ser esquerda)
 			// E avisar o MazeSolver que houve uma rotação para este lado
+			std::cout << "Gira krl: " << o_angle(90.0) << std::endl;
 			edubot.safe_rotate(o_angle(90.0));
+			std::cout << "Girei" << std::endl;
 			maze.rotated((Side)OTHER_SIDE);
 
 			snooze();
@@ -119,8 +124,8 @@ int main() {
 // Senão ela morre de exaustão
 void snooze() {
 	#ifdef _WIN32
-	    Sleep(1);
+	    Sleep(100);
 	#else
-	    usleep(1000);
+	    usleep(100000);
 	#endif
 }

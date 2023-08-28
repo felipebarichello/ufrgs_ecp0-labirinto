@@ -18,7 +18,7 @@
 #define ROTATION_STEPS 4
 
 // Quantos graus de imprecisão o ângulo do robô pode estar
-#define ANGLE_HIGH_TOLERANCE 6.0
+#define ANGLE_HIGH_TOLERANCE 8.0
 #define ANGLE_LOW_TOLERANCE  4.0
 
 #define ADJUSTMENT_TIME 800
@@ -30,7 +30,7 @@
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
 	//   -1 a -180: Força do drift para a esquerda
-	#define SIM_DRIFT -5
+	#define SIM_DRIFT 0
 
      // O quanto dura o drift do robô simulado, em milissegundos
 	#define SIM_DRIFT_TIME 1
@@ -73,18 +73,20 @@
 	#define CENTER_TOLERANCE .08
 
 	#define FALLBACK_DISTANCE .12
+
+	#define MOVE_COOLDOWN 100
 #else
 	// Máxima velocidade considerada segura
-	#define HIGH_SPEED .1
+	#define HIGH_SPEED .3
 	
 	// Velocidade mais segura para detecções mais precisas
-	#define MID_SPEED .06
+	#define MID_SPEED .22
 	
 	// Velocidade para manobrar
-	#define SLOW_SPEED .03
+	#define SLOW_SPEED .18
 	
 	// Distância que o robô tentará permanecer da parede
-	#define WALL_DISTANCE 15.0
+	#define WALL_DISTANCE 10.0
 
 	// Fora destes valores, o robô vai se ajustar para manter a distância
 	#define MIN_WALL_DISTANCE 12.0
@@ -97,7 +99,7 @@
 	#define FAR_DISTANCE 30.0
 
 	// Tempo máximo que o robô leva para rotacionar
-	#define ROTATION_DURATION 2000
+	#define ROTATION_DURATION 5000
 	
 	// Tipo WALL_DISTANCE, mas no momento da rotação
 	#define ROTATION_RADIUS 18.0
@@ -109,4 +111,6 @@
 	#define CENTER_TOLERANCE 8.0
 
 	#define FALLBACK_DISTANCE 15.0
+
+	#define MOVE_COOLDOWN 100
 #endif
