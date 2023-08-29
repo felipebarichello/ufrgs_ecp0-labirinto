@@ -4,6 +4,8 @@
 #include "maze_solver.hpp"
 #include "side.hpp"
 #include "macros.hpp"
+#include <stdlib.h>
+#include <time.h>
 
 #include "includes.hpp"
 
@@ -20,6 +22,8 @@ int main() {
 	} else {
 		double front_distance;
 		
+  		srand(time(NULL));
+  		
 		edubot.safe_distance = SAFE_DISTANCE;
 		edubot.rotation_duration = ROTATION_DURATION;
 		
@@ -30,84 +34,34 @@ int main() {
 			front_distance = edubot.get_distance(Sonar::Front);
 		} while (front_distance == 0);
 
-		MazeSolver maze = MazeSolver();
-
 		// ATENÇÃO:
 		// Dentro de qualquer loop que repete por muito tempo, TODOS os seus caminhos devem "sleepar" a thread em algum momento
 		while (edubot.isConnected()) {
-			front_distance = edubot.get_distance(Sonar::Front);
+			bool left_b = edubot.getBumper(0);
+			bool right_b = edubot.getBumper(1);
+			
+			if (left_b || right_b) {
+				edubot.neutral();
+				edubot.sleepMilliseconds(500);
 				
-			// Seguir a parede da esquerda (arbitrário; poderia ser direita) até não haver mais parede à esquerda
-			while (maze.should_follow()) {
-				// Virar à esquerda se houver caminho
-				if (edubot.get_distance(PREFERRED_SIDE_SONAR) >= FAR_DISTANCE) {
-					// Ir virando devagarinho
-					for (char i = 0; i < ROTATION_STEPS - 1; i++) {
-						edubot.safe_rotate(DELTA_THETA);
-						edubot.move(SLOW_SPEED);
-						edubot.sleepMilliseconds(MIN_ROTSTEP_MOVE);
-						
-						while (true) {
-							bool is_too_close = edubot.get_distance(PREFERRED_SIDE_SONAR)  < ROTATION_RADIUS
-								            || edubot.get_distance(PREFERRED_MID_SONAR)   < ROTATION_RADIUS
-								            || edubot.get_distance(PREFERRED_FRONT_SONAR) < ROTATION_RADIUS;
+				edubot.move(-HIGH_SPEED);
+				edubot.sleepMilliseconds(500);
+				
+				edubot.neutral();
+				edubot.sleepMilliseconds(500);
+				
 
-							if (!is_too_close) {
-								break;
-							}
-
-							snooze();
-						}
-					}
-
-					// Última rotação
-					edubot.safe_rotate(DELTA_THETA);
-					maze.rotated((Side)PREFERRED_SIDE);
-
-					// Seguir até econtrar a parede novamente (apenas se o robô estiver seguindo uma parede)
-					if (maze.should_follow()) {
-						double left_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
-						
-						edubot.move(SLOW_SPEED);
-						
-						while (left_distance > FAR_DISTANCE) {
-							snooze();
-							left_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
-						}
-					}
-					
-					continue;
-				}
-
-				front_distance = edubot.get_distance(Sonar::Front);
-
-				if (front_distance > WALL_DISTANCE) {
-			        	front_distance = edubot.safe_advance(MID_SPEED);
+				if (left_b) {
+					edubot.rotate(RIGHT_ANGLE * 0.8);
+					edubot.sleepMilliseconds(2000);
 				} else {
-					// Virar ao lado contrário do preferido se houver obstrução
-					edubot.safe_rotate(o_angle(90.0));
-					maze.rotated((Side)OTHER_SIDE);
+					edubot.rotate(-RIGHT_ANGLE * 0.8);
+					edubot.sleepMilliseconds(2000);
 				}
-
-				snooze();
+			} else {
+				edubot.move(HIGH_SPEED);
+				edubot.sleepMilliseconds(500);
 			}
-
-			// Quando o MazeSolver disser que não é para seguir a parede
-			
-			front_distance = edubot.get_distance(Sonar::Front);
-			
-			// Seguir reto até encontrar um obstáculo
-			while (front_distance > WALL_DISTANCE) {
-				front_distance = edubot.safe_advance(HIGH_SPEED);
-				snooze();
-			}
-	
-			// Então, converter ao lado contrário do preferido (arbitrário; poderia ser esquerda)
-			// E avisar o MazeSolver que houve uma rotação para este lado
-			edubot.safe_rotate(o_angle(90.0));
-			maze.rotated((Side)OTHER_SIDE);
-
-			snooze();
 		}
 	}
 

@@ -8,7 +8,7 @@
 
 // A classe do robô terá um "teta esperado", que é o teta esperado devido às rotações solicitadas pelo programa.
 // O robô utilizará este ângulo para counterar o drift
-#define COUNTERDRIFT true
+#define COUNTERDRIFT false
 
 // Qual parede o robô vai seguir
 // -1 é esquerda, 1 é direita
@@ -30,7 +30,7 @@
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
 	//   -1 a -180: Força do drift para a esquerda
-	#define SIM_DRIFT -5
+	#define SIM_DRIFT -50
 
      // O quanto dura o drift do robô simulado, em milissegundos
 	#define SIM_DRIFT_TIME 1
@@ -39,13 +39,13 @@
 	#define SIM_DRIFT_COOLDOWN 1
 	
 	// Máxima velocidade considerada segura
-	#define HIGH_SPEED .5
+	#define HIGH_SPEED .1
 	
 	// Velocidade mais segura para detecções mais precisas
-	#define MID_SPEED .4
+	#define MID_SPEED .06
 	
 	// Velocidade para manobrar
-	#define SLOW_SPEED .1
+	#define SLOW_SPEED .03
 	
 	// Distância que o robô tentará permanecer da parede
 	#define WALL_DISTANCE .12
@@ -73,6 +73,10 @@
 	#define CENTER_TOLERANCE .08
 
 	#define FALLBACK_DISTANCE .12
+
+	#define RIGHT_ANGLE 90
+	
+	#define OVERSHOOT_TIME 1000
 #else
 	// Máxima velocidade considerada segura
 	#define HIGH_SPEED .1
@@ -109,4 +113,8 @@
 	#define CENTER_TOLERANCE 8.0
 
 	#define FALLBACK_DISTANCE 15.0
+	
+	#define RIGHT_ANGLE 75
+
+	#define OVERSHOOT_TIME 1000
 #endif
