@@ -100,19 +100,36 @@ Angle Edubot::get_angle() {
 
 double Edubot::safe_advance(double base_speed) {
 	#if (COUNTERDRIFT)
-		if (this->intended_theta - this->get_angle() > (Angle)ANGLE_LOW_TOLERANCE) {
-			this->center_self(CENTER_TOLERANCE, FAR_DISTANCE, FALLBACK_DISTANCE);
-		}
+//		this->counter_drift(CENTER_TOLERANCE, FAR_DISTANCE, FALLBACK_DISTANCE);
 	#endif
+
+	if (this->getBumper(0)) {
+		int side;
+		if (rand()%2 == 0) side = -1;
+		else side = 1;
+		
+		this->move(-MID_SPEED);
+		this->sleepMilliseconds(2000);
+		this->safe_rotate(RIGHT_ANGLE * side);
+	} else if (this->getBumper(1)) {
+		int side;
+		if (rand()%2 == 0) side = -1;
+		else side = 1;
+		
+		this->move(-MID_SPEED);
+		this->sleepMilliseconds(2000);
+		this->safe_rotate(RIGHT_ANGLE * side);
+	}
 	
 	double front_distance = this->get_distance(Sonar::Front);
 	
-	double safety_multiplier = front_distance / this->safe_distance;
+	double safety_multiplier = (front_distance + SAFETY_OFFSET) / this->safe_distance;
 	safety_multiplier = fmax(fmin(safety_multiplier, 1), 0);
 	
 	double speed = base_speed * safety_multiplier;
 	
 	this->move(speed);
+	this->sleepMilliseconds(MOVE_WAIT);
 
 	return front_distance;
 }
@@ -120,10 +137,6 @@ double Edubot::safe_advance(double base_speed) {
 void Edubot::safe_rotate(Angle angle) {
 	this->rotate(angle);
 	this->sleepMilliseconds(this->rotation_duration);
-    	
-    	#if (COUNTERDRIFT)
-    		this->intended_theta += angle;
-    	#endif
 }
 
 void Edubot::set_angle(Angle angle) {
@@ -132,57 +145,36 @@ void Edubot::set_angle(Angle angle) {
 }
 
 #if (COUNTERDRIFT)
-	Angle Edubot::get_intended_theta() {
-		return this->intended_theta;
-	}
+	void Edubot::counter_drift(double tolerance, double too_far, double fallback) {
+		double left_distance  = get_distance(Sonar::Left);
+		double right_distance = get_distance(Sonar::Right);
 
-	void Edubot::adjust_angle() {
-		Angle intended_theta = this->intended_theta;
-		this->set_angle(this->intended_theta);
-		this->intended_theta = intended_theta;
-	}
-
-	void Edubot::adjust_angle_until(Angle tolerance) {
-		while (this->intended_theta - this->get_angle() > tolerance) {
-			this->adjust_angle();
-		}
-	}
-
-	void Edubot::center_self(double tolerance, double too_far, double fallback) {
-		this->adjust_angle_until(ANGLE_LOW_TOLERANCE);
-	
-		while (true) {
-			double left_distance  = get_distance(Sonar::Left);
-			double right_distance = get_distance(Sonar::Right);
-
-			if (left_distance  >= too_far) left_distance  = fallback;
-			if (right_distance >= too_far) right_distance = fallback;
-
-			double diff = right_distance - left_distance;
-
-			// Se estiver dentro da tolerância (no centro o suficiente), já está centralizado
-			if (diff <= tolerance) {
-				break;
-			}
-
-			Angle adjustment_turn = Angle(0);
-
-			// (diff > 0) -> (right_distance > left_distance) -> (robô muito para a esquerda) -> (deve rotacionar no sentido horário)
-			if (diff > 0) {
-				adjustment_turn = 90.0;
-			} else {
-				adjustment_turn = -90.0;
-			}
-
-			this->safe_rotate(adjustment_turn);
-			this->move(SLOW_SPEED);
-			this->sleepMilliseconds(ADJUSTMENT_TIME);
-			this->safe_rotate(-adjustment_turn);
-	
-			this->sleepMilliseconds(1);
+		// if (left_distance  >= too_far) left_distance  = fallback;
+		// if (right_distance >= too_far) right_distance = fallback;
+		
+		if (left_distance >= too_far || right_distance >= too_far) {
+			return;
 		}
 
-		this->adjust_angle_until(ANGLE_HIGH_TOLERANCE);
+		double diff = right_distance - left_distance;
+		double abs_diff = fabs(diff);
+
+		Angle adjustment_turn = Angle(0);
+
+		double counter_angle = pow(abs_diff * COUNTER_ANGLE_MULTIPLIER, COUNTER_ANGLE_EXPONENT) + MIN_COUNTER_ANGLE;
+
+		std::cout << abs_diff << std::endl;
+
+		// (diff > 0) -> (right_distance > left_distance) -> (robô muito para a esquerda) -> (deve rotacionar no sentido horário)
+		if (diff > 0) {
+			adjustment_turn = counter_angle;
+		} else {
+			adjustment_turn = -counter_angle;
+		}
+
+		this->safe_rotate(adjustment_turn);
+		this->move(SLOW_SPEED);
+		this->sleepMilliseconds(ADJUSTMENT_TIME);
 	}
 #endif
 

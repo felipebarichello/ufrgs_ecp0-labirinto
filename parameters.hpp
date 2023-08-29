@@ -23,6 +23,8 @@
 
 #define ADJUSTMENT_TIME 800
 
+#define MOVE_WAIT 500
+
 
 #if (SIMULATION)
 	// Força do drift simulado do simulador
@@ -30,7 +32,7 @@
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
 	//   -1 a -180: Força do drift para a esquerda
-	#define SIM_DRIFT -5
+	#define SIM_DRIFT -30
 
      // O quanto dura o drift do robô simulado, em milissegundos
 	#define SIM_DRIFT_TIME 1
@@ -39,40 +41,56 @@
 	#define SIM_DRIFT_COOLDOWN 1
 	
 	// Máxima velocidade considerada segura
-	#define HIGH_SPEED .5
+	#define HIGH_SPEED .2
 	
 	// Velocidade mais segura para detecções mais precisas
-	#define MID_SPEED .4
+	#define MID_SPEED .15
 	
 	// Velocidade para manobrar
 	#define SLOW_SPEED .1
 	
 	// Distância que o robô tentará permanecer da parede
-	#define WALL_DISTANCE .12
+	#define WALL_DISTANCE .17
+	#define FOLLOW_DISTANCE .15
 
 	// Fora destes valores, o robô vai se ajustar para manter a distância
 	#define MIN_WALL_DISTANCE .10
 	#define MAX_WALL_DISTANCE .14
 
 	// Distância a partir da qual o robô considera "seguro" andar em alta velocidade
-	#define SAFE_DISTANCE 1.0
+	#define SAFE_DISTANCE 0.5
 
 	// Distância considerada "longe" para decidir se não há parede na direção
-	#define FAR_DISTANCE .3
+	#define FAR_DISTANCE .25
 	
 	// Tempo máximo que o robô leva para rotacionar
 	#define ROTATION_DURATION 1500
 	
 	// Tipo WALL_DISTANCE, mas no momento da rotação
-	#define ROTATION_RADIUS .18
+	#define ROTATION_RADIUS .2
 
 	// Tempo mínimo que o robô vai andar após rotacionar para o lado da parede que está seguindo a cada passo
 	#define MIN_ROTSTEP_MOVE 500
 
 	// Imprecisão de distância permitida do robô não estar no centro
-	#define CENTER_TOLERANCE .08
+	#define CENTER_TOLERANCE .06
+	
+	// Imprecisão de distância permitida do robô não estar na distância lateral correta da parede
+	#define FOLLOW_DISTANCE_TOLERANCE .02
 
 	#define FALLBACK_DISTANCE .12
+
+	#define RIGHT_ANGLE 90.0
+
+	#define MIN_COUNTER_ANGLE 5.0
+	
+	#define COUNTER_ANGLE_MULTIPLIER 30.0
+
+	#define COUNTER_ANGLE_EXPONENT 2
+
+	#define OVERSHOOT_TIME 1500
+
+	#define SAFETY_OFFSET 0.01
 #else
 	// Máxima velocidade considerada segura
 	#define HIGH_SPEED .1
@@ -109,4 +127,6 @@
 	#define CENTER_TOLERANCE 8.0
 
 	#define FALLBACK_DISTANCE 15.0
+	
+	#define RIGHT_ANGLE 75.0
 #endif

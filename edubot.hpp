@@ -82,22 +82,9 @@ class Edubot : public EdubotLib {
 
 	#if (COUNTERDRIFT)
 		public:
-			Angle get_intended_theta();
-
-			// Ajusta o ângulo uma vêz para intended_theta
-			void adjust_angle();
-
-			// Ajusta o ângulo para intended_theta até entrar na tolerância
-			void adjust_angle_until(Angle tolerance);
-		
 			// Move o robï¿½ lateralmente, a fim de colocï¿½-lo no meio da pista atï¿½ a distï¿½ncia lateral do obstï¿½culo desejada
 			// Bloqueia o resto do programa atï¿½ o fim do ajuste
-			void center_self(double tolerance, double too_far, double fallback);
-
-		private:
-			// "Teta esperado" proveniente das rotaï¿½ï¿½es solicitadas do programa
-			// O robï¿½ utilizarï¿½ este ï¿½ngulo para counterar o drift
-			Angle intended_theta = Angle(0);
+			void counter_drift(double tolerance, double too_far, double fallback);
 	#endif
 
 	#if (SIM_DRIFT != 0)
