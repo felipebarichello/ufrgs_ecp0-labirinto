@@ -11,6 +11,7 @@
 
 
 void snooze();
+double rnd_side(bool, bool);
 
 
 int main() {
@@ -44,25 +45,28 @@ int main() {
 				edubot.neutral();
 				edubot.sleepMilliseconds(500);
 				
-				edubot.move(-HIGH_SPEED);
+				edubot.move(-0.5);
 				edubot.sleepMilliseconds(500);
 				
 				edubot.neutral();
 				edubot.sleepMilliseconds(500);
-				
 
-				if (left_b) {
-					edubot.rotate(RIGHT_ANGLE * 0.8);
-					edubot.sleepMilliseconds(2000);
-				} else {
-					edubot.rotate(-RIGHT_ANGLE * 0.8);
-					edubot.sleepMilliseconds(2000);
-				}
+				edubot.safe_rotate(rnd_side(left_b, right_b));
 			} else {
-				edubot.move(HIGH_SPEED);
+				if (rand()%100 < 5) {
+					edubot.move(-0.5);
+					edubot.sleepMilliseconds(2000);
+					edubot.stop();
+					edubot.safe_rotate(rnd_side(false, false));
+					continue;
+				}
+				
+				edubot.move(0.4);
 				edubot.sleepMilliseconds(500);
 			}
 		}
+
+		std::cout << "Conexão perdida" << std::endl;
 	}
 
 	return 0;
@@ -77,4 +81,22 @@ void snooze() {
 	#else
 	    usleep(1000);
 	#endif
+}
+
+double rnd_side(bool left_b, bool right_b) {
+	int bias = 0;
+
+	if (left_b) {
+		bias -= 300;
+	}
+
+	if (right_b) {
+		bias += 300;
+	}
+
+	if (rand()%1000 < 500 + bias) {
+		return -TURN_ANGLE;
+	} else {
+		return TURN_ANGLE;
+	}
 }

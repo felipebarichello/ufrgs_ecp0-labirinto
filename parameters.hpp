@@ -30,7 +30,7 @@
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
 	//   -1 a -180: Força do drift para a esquerda
-	#define SIM_DRIFT -50
+	#define SIM_DRIFT -100
 
      // O quanto dura o drift do robô simulado, em milissegundos
 	#define SIM_DRIFT_TIME 1
@@ -39,13 +39,13 @@
 	#define SIM_DRIFT_COOLDOWN 1
 	
 	// Máxima velocidade considerada segura
-	#define HIGH_SPEED .1
+	#define HIGH_SPEED .4
 	
 	// Velocidade mais segura para detecções mais precisas
-	#define MID_SPEED .06
+	#define MID_SPEED .3
 	
 	// Velocidade para manobrar
-	#define SLOW_SPEED .03
+	#define SLOW_SPEED .2
 	
 	// Distância que o robô tentará permanecer da parede
 	#define WALL_DISTANCE .12
@@ -75,6 +75,7 @@
 	#define FALLBACK_DISTANCE .12
 
 	#define RIGHT_ANGLE 90
+	#define TURN_ANGLE 55
 	
 	#define OVERSHOOT_TIME 1000
 #else
@@ -115,6 +116,7 @@
 	#define FALLBACK_DISTANCE 15.0
 	
 	#define RIGHT_ANGLE 75
+	#define TURN_ANGLE 50
 
 	#define OVERSHOOT_TIME 1000
 #endif
