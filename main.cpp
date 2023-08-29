@@ -24,8 +24,7 @@ int main() {
 		double front_distance;
 		
   		srand(time(NULL));
-  		
-		edubot.safe_distance = SAFE_DISTANCE;
+
 		edubot.rotation_duration = ROTATION_DURATION;
 		
 		// Esperar até o valor do sonar frontal ser atualizado
@@ -35,6 +34,8 @@ int main() {
 			front_distance = edubot.get_distance(Sonar::Front);
 		} while (front_distance == 0);
 
+		int counterdrift_cooldown = COUNTERDRIFT_COOLDOWN;
+
 		// ATENÇÃO:
 		// Dentro de qualquer loop que repete por muito tempo, TODOS os seus caminhos devem "sleepar" a thread em algum momento
 		while (edubot.isConnected()) {
@@ -42,27 +43,60 @@ int main() {
 			bool right_b = edubot.getBumper(1);
 			
 			if (left_b || right_b) {
-				edubot.neutral();
-				edubot.sleepMilliseconds(500);
-				
-				edubot.move(-0.5);
-				edubot.sleepMilliseconds(500);
+				#if (LOG_ALL)
+					std::cout << "Batida detectada" << std::endl;
+				#endif
 				
 				edubot.neutral();
-				edubot.sleepMilliseconds(500);
+				edubot.sleepMilliseconds(INVERSION_WAIT);
+				
+				edubot.move(-RETREAT_SPEED);
+				edubot.sleepMilliseconds(RETREAT_TIME);
+				
+				edubot.neutral();
+				edubot.sleepMilliseconds(PRE_ROTATION_WAIT);
+				
+				#if (LOG_ALL)
+					std::cout << "Rotação de batida" << std::endl;
+				#endif
 
 				edubot.safe_rotate(rnd_side(left_b, right_b));
 			} else {
-				if (rand()%100 < 5) {
-					edubot.move(-0.5);
-					edubot.sleepMilliseconds(2000);
+				
+				if (rand()%100 < RND_INVERSION_CHANCE) {
+					#if (LOG_ALL)
+						std::cout << "Inversão aleatória" << std::endl;
+					#endif
+					
+					edubot.neutral();
+					edubot.sleepMilliseconds(INVERSION_WAIT);
+					edubot.move(-RETREAT_SPEED);
+					edubot.sleepMilliseconds(RETREAT_TIME);
 					edubot.stop();
 					edubot.safe_rotate(rnd_side(false, false));
 					continue;
 				}
+
 				
-				edubot.move(0.4);
-				edubot.sleepMilliseconds(500);
+				#if (DUMB_COUNTERDRIFT != 0)
+					if (counterdrift_cooldown < 0) {
+						#if (LOG_ALL)
+							std::cout << "Ajuste" << std::endl;
+						#endif
+						
+						edubot.safe_rotate(DUMB_COUNTERDRIFT);
+						counterdrift_cooldown = COUNTERDRIFT_COOLDOWN;
+					} else {
+						counterdrift_cooldown--;
+					}
+				#endif
+
+				#if (LOG_ALL)
+					std::cout << "Avanço" << std::endl;
+				#endif
+				
+				edubot.move(MID_SPEED);
+				edubot.sleepMilliseconds(MOVE_WAIT);
 			}
 		}
 
@@ -87,14 +121,14 @@ double rnd_side(bool left_b, bool right_b) {
 	int bias = 0;
 
 	if (left_b) {
-		bias -= 300;
+		bias -= RIGHT_BIAS;
 	}
 
 	if (right_b) {
-		bias += 300;
+		bias += LEFT_BIAS;
 	}
 
-	if (rand()%1000 < 500 + bias) {
+	if (rand()%1000 < HARD_BIAS + bias) {
 		return -TURN_ANGLE;
 	} else {
 		return TURN_ANGLE;
