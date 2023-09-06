@@ -90,7 +90,7 @@ class Edubot : public EdubotLib {
 			// Ajusta o ângulo para intended_theta até entrar na tolerância
 			void adjust_angle_until(Angle tolerance);
 		
-			// Move o robô lateralmente, a fim de colocï¿½-lo no meio da pista até a distância lateral do obstáculo desejada
+			// Move o robô lateralmente, a fim de colocá-lo no meio da pista até a distância lateral do obstáculo desejada
 			// Bloqueia o resto do programa até o fim do ajuste
 			void center_self(double tolerance, double too_far, double fallback);
 
