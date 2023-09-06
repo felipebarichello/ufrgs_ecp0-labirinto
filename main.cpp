@@ -37,10 +37,12 @@ int main() {
 		while (edubot.isConnected()) {
 			front_distance = edubot.get_distance(Sonar::Front);
 				
-			// Seguir a parede da esquerda (arbitr·rio; poderia ser direita) atÈ n„o haver mais parede ‡ esquerda
+			// Seguir a parede do lado preferido
 			while (maze.should_follow()) {
-				// Virar ‡ esquerda se houver caminho
+				// Virar ao lado preferido se houver caminho
 				if (edubot.get_distance(PREFERRED_SIDE_SONAR) >= FAR_DISTANCE) {
+					/* H· caminho para o lado preferido (a parede "acabou") */
+
 					// Ir virando devagarinho
 					for (char i = 0; i < ROTATION_STEPS - 1; i++) {
 						edubot.safe_rotate(DELTA_THETA);
@@ -49,8 +51,8 @@ int main() {
 						
 						while (true) {
 							bool is_too_close = edubot.get_distance(PREFERRED_SIDE_SONAR)  < ROTATION_RADIUS
-								            || edubot.get_distance(PREFERRED_MID_SONAR)   < ROTATION_RADIUS
-								            || edubot.get_distance(PREFERRED_FRONT_SONAR) < ROTATION_RADIUS;
+								             || edubot.get_distance(PREFERRED_MID_SONAR)   < ROTATION_RADIUS
+								             || edubot.get_distance(PREFERRED_FRONT_SONAR) < ROTATION_RADIUS;
 
 							if (!is_too_close) {
 								break;
@@ -66,30 +68,30 @@ int main() {
 
 					// Seguir atÈ econtrar a parede novamente (apenas se o robÙ estiver seguindo uma parede)
 					if (maze.should_follow()) {
-						double left_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
+						double preferred_side_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
 						
 						edubot.move(SLOW_SPEED);
 						
-						while (left_distance > FAR_DISTANCE) {
+						while (preferred_side_distance > FAR_DISTANCE) {
 							snooze();
-							left_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
+							preferred_side_distance = edubot.get_distance(PREFERRED_SIDE_SONAR);
 						}
 					}
-					
-					continue;
-				}
-
-				front_distance = edubot.get_distance(Sonar::Front);
-
-				if (front_distance > WALL_DISTANCE) {
-			        	front_distance = edubot.safe_advance(MID_SPEED);
 				} else {
-					// Virar ao lado contr·rio do preferido se houver obstruÁ„o
-					edubot.safe_rotate(o_angle(90.0));
-					maze.rotated((Side)OTHER_SIDE);
-				}
+					/* A parede continua. Seguir reto. */
 
-				snooze();
+					front_distance = edubot.get_distance(Sonar::Front);
+
+					if (front_distance > WALL_DISTANCE) {
+							front_distance = edubot.safe_advance(MID_SPEED);
+					} else {
+						// Virar ao lado contrùrio do preferido se houver obstruùùo
+						edubot.safe_rotate(o_angle(90.0));
+						maze.rotated((Side)OTHER_SIDE);
+					}
+
+					snooze();
+				}
 			}
 
 			// Quando o MazeSolver disser que n„o È para seguir a parede
