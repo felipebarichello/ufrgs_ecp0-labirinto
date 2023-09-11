@@ -25,7 +25,8 @@
 
 
 #if (SIMULATION)
-	// Força do drift simulado do simulador
+	// Força do drift simulado do simulador.
+	// Tem como objetivo testar no simulador de forma mais fiel ao robô real.
 	// Valores:
 	// 	0: Drift desligado
 	//   1 a 180: Força do drift para a direita
@@ -72,6 +73,8 @@
 	// Imprecisão de distância permitida do robô não estar no centro
 	#define CENTER_TOLERANCE .08
 
+	// Caso alguma distância medida seja muito grande durante uma verificação de centralidade,
+	// o programa considera que há um buraco na direção medida e substitui a distância por esta.
 	#define FALLBACK_DISTANCE .12
 #else
 	// Máxima velocidade considerada segura
@@ -108,5 +111,7 @@
 	// Imprecisão de distância permitida do robô não estar no centro
 	#define CENTER_TOLERANCE 8.0
 
+	// Caso alguma distância medida seja muito grande durante uma verificação de centralidade,
+	// o programa considera que há um buraco na direção medida e substitui a distância por esta.
 	#define FALLBACK_DISTANCE 15.0
 #endif
