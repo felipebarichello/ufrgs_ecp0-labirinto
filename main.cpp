@@ -50,7 +50,7 @@ int main() {
 						edubot.sleepMilliseconds(MIN_ROTSTEP_MOVE);
 						
 						while (true) {
-							bool is_too_close = edubot.get_distance(PREFERRED_SIDE_SONAR)  < ROTATION_RADIUS
+							bool is_too_close = edubot.get_distance(PREFERRED_SIDE_SONAR)   < ROTATION_RADIUS
 								             || edubot.get_distance(PREFERRED_MID_SONAR)   < ROTATION_RADIUS
 								             || edubot.get_distance(PREFERRED_FRONT_SONAR) < ROTATION_RADIUS;
 
@@ -85,7 +85,7 @@ int main() {
 					if (front_distance > WALL_DISTANCE) {
 							front_distance = edubot.safe_advance(MID_SPEED);
 					} else {
-						// Virar ao lado contrùrio do preferido se houver obstruùùo
+						// Virar ao lado contr·rio do preferido se houver obstruÁ„o
 						edubot.safe_rotate(o_angle(90.0));
 						maze.rotated((Side)OTHER_SIDE);
 					}
